@@ -1,0 +1,35 @@
+
+[
+  {
+    "prompt": "A beautiful city at sunset",
+    "scene": "city"
+  },
+  {
+    "prompt": "A green forest in daylight",
+    "scene": "nature"
+  },
+  {
+    "prompt": "A spaceship flying in space",
+    "scene": "space"
+  },
+  {
+    "prompt": "Waves moving in the ocean",
+    "scene": "ocean"
+  },
+  {
+    "prompt": "A person walking in a city",
+    "scene": "city"
+  },
+  {
+    "prompt": "A quiet forest at night",
+    "scene": "nature"
+  },
+  {
+    "prompt": "A planet in outer space",
+    "scene": "space"
+  },
+  {
+    "prompt": "A beautiful sea at sunset",
+    "scene": "ocean"
+  }
+]
