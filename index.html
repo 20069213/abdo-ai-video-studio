@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080914">
+    <title>ABDO AI VIDEO STUDIO</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">👑 ABDO AI</div>
+    <p>VIDEO STUDIO</p>
+    <span class="version">AI CREATIVE STUDIO</span>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <h1>اصنع فيديوهاتك بالذكاء الاصطناعي</h1>
+        <p>حوّل خيالك إلى فيديوهات إبداعية</p>
+    </section>
+
+    <section class="card">
+        <h2>🎬 تحويل النص إلى فيديو</h2>
+
+        <textarea id="prompt"
+            placeholder="اكتب وصف الفيديو الذي تريد إنشاءه..."></textarea>
+
+        <button onclick="generateTextVideo()">
+            إنشاء فيديو
+        </button>
+    </section>
+
+    <section class="card">
+        <h2>🖼️ تحويل صورة إلى فيديو</h2>
+
+        <input type="file" id="image" accept="image/*">
+
+        <img id="imagePreview" alt="معاينة الصورة">
+
+        <textarea id="imagePrompt"
+            placeholder="اكتب كيف تريد أن تتحرك الصورة..."></textarea>
+
+        <button onclick="generateImageVideo()">
+            تحريك الصورة
+        </button>
+    </section>
+
+    <section class="card">
+        <h2>📁 مشاريعي</h2>
+        <div id="status">
+            لا توجد مشاريع حتى الآن
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 ABDO AI VIDEO STUDIO</p>
+    <p>Created by ABDO SAAD 👑</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
