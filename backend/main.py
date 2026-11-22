@@ -1,42 +1,56 @@
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+from backend.train_model import train
+from backend.ai_model import AbdoAI
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    train()
+    app.state.ai = AbdoAI()
+    yield
+
 
 app = FastAPI(
     title="ABDO AI VIDEO STUDIO",
-    description="AI Video Generation Backend",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"]
 )
+
+
+class PromptRequest(BaseModel):
+    prompt: str
+
 
 @app.get("/")
 def home():
     return {
         "app": "ABDO AI VIDEO STUDIO",
-        "status": "online",
-        "message": "Welcome to ABDO AI"
+        "status": "online"
     }
+
 
 @app.get("/health")
 def health():
     return {
         "status": "healthy",
-        "python": True,
-        "video_engine": "not_connected"
+        "model": "ABDO AI",
+        "engine": "experimental_scene_classifier"
     }
 
-@app.get("/api/features")
-def features():
-    return {
-        "text_to_video": True,
-        "image_to_video": True,
-        "ai_voice": True,
-        "subtitles": True,
-        "video_export": True
-    }
+
+@app.post("/api/analyze")
+def analyze(data: PromptRequest):
+    return app.state.ai.analyze(data.prompt)
