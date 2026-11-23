@@ -1,63 +1,79 @@
 
-const imageInput = document.getElementById("image");
-const imagePreview = document.getElementById("imagePreview");
-const statusBox = document.getElementById("status");
+const API_URL = "https://YOUR-BACKEND-URL.onrender.com";
 
-let selectedImage = null;
+const promptInput = document.getElementById("prompt");
+const imageInput = document.getElementById("imageInput");
+const analyzeButton = document.getElementById("analyzeButton");
+const resultBox = document.getElementById("result");
+const preview = document.getElementById("preview");
 
+// معاينة الصورة المختارة
 imageInput.addEventListener("change", function () {
     const file = this.files[0];
 
     if (!file) {
-        selectedImage = null;
-        imagePreview.style.display = "none";
+        preview.hidden = true;
         return;
     }
 
     if (!file.type.startsWith("image/")) {
-        alert("اختار صورة صحيحة!");
+        resultBox.textContent = "من فضلك اختر صورة صحيحة.";
         this.value = "";
+        preview.hidden = true;
         return;
     }
 
-    selectedImage = file;
+    const imageURL = URL.createObjectURL(file);
 
-    const reader = new FileReader();
-
-    reader.onload = function (event) {
-        imagePreview.src = event.target.result;
-        imagePreview.style.display = "block";
-    };
-
-    reader.readAsDataURL(file);
+    preview.src = imageURL;
+    preview.hidden = false;
 });
 
-function generateTextVideo() {
-    const prompt = document.getElementById("prompt").value.trim();
+// تحليل وصف الفيديو
+analyzeButton.addEventListener("click", async function () {
+    const prompt = promptInput.value.trim();
 
     if (!prompt) {
-        alert("اكتب وصف الفيديو الأول!");
+        resultBox.textContent = "اكتب وصف الفيديو أولاً.";
         return;
     }
 
-    statusBox.textContent =
-        "تم تسجيل فكرة الفيديو: " + prompt;
+    analyzeButton.disabled = true;
+    resultBox.textContent = "جاري تحليل الوصف...";
 
-    alert("تم تسجيل وصف الفيديو بنجاح!");
-}
+    try {
+        const response = await fetch(
+            `${API_URL}/api/analyze`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ prompt })
+            }
+        );
 
-function generateImageVideo() {
-    if (!selectedImage) {
-        alert("اختار صورة الأول!");
-        return;
+        if (!response.ok) {
+            throw new Error("Server error: " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || "Analysis failed");
+        }
+
+        resultBox.textContent =
+            "تم التحليل بنجاح!\n" +
+            "المشهد: " + data.scene + "\n" +
+            "النموذج: " + data.model;
+
+    } catch (error) {
+        resultBox.textContent =
+            "تعذر الاتصال بالسيرفر.\n" +
+            "تأكد من تشغيل Backend وإعداد رابط API.\n" +
+            error.message;
+    } finally {
+        analyzeButton.disabled = false;
     }
-
-    const prompt =
-        document.getElementById("imagePrompt").value.trim();
-
-    statusBox.textContent =
-        "الصورة جاهزة: " + selectedImage.name +
-        (prompt ? " | وصف الحركة: " + prompt : "");
-
-    alert("تم تجهيز الصورة للمرحلة القادمة!");
-}
+});
