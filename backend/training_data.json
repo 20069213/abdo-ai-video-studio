@@ -31,5 +31,13 @@
   {
     "prompt": "A beautiful sea at sunset",
     "scene": "ocean"
+  },
+  {
+    "prompt": "A crowded city at night",
+    "scene": "city"
+  },
+  {
+    "prompt": "Green trees and mountains",
+    "scene": "nature"
   }
 ]
