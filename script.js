@@ -1,35 +1,38 @@
 
-const API_URL = "https://YOUR-BACKEND-URL.onrender.com";
+const API_URL = "https://acrobat-til-dimension-configure.trycloudflare.com";
 
 const promptInput = document.getElementById("prompt");
 const imageInput = document.getElementById("imageInput");
 const analyzeButton = document.getElementById("analyzeButton");
+const createVideoButton = document.getElementById("createVideoButton");
+
 const resultBox = document.getElementById("result");
 const preview = document.getElementById("preview");
+const videoPreview = document.getElementById("videoPreview");
+const downloadVideo = document.getElementById("downloadVideo");
 
-// معاينة الصورة المختارة
+let selectedImage = null;
+
 imageInput.addEventListener("change", function () {
-    const file = this.files[0];
+    selectedImage = this.files[0];
 
-    if (!file) {
+    if (!selectedImage) {
         preview.hidden = true;
         return;
     }
 
-    if (!file.type.startsWith("image/")) {
-        resultBox.textContent = "من فضلك اختر صورة صحيحة.";
+    if (!selectedImage.type.startsWith("image/")) {
+        resultBox.textContent = "اختر صورة صحيحة.";
+        selectedImage = null;
         this.value = "";
         preview.hidden = true;
         return;
     }
 
-    const imageURL = URL.createObjectURL(file);
-
-    preview.src = imageURL;
+    preview.src = URL.createObjectURL(selectedImage);
     preview.hidden = false;
 });
 
-// تحليل وصف الفيديو
 analyzeButton.addEventListener("click", async function () {
     const prompt = promptInput.value.trim();
 
@@ -42,25 +45,18 @@ analyzeButton.addEventListener("click", async function () {
     resultBox.textContent = "جاري تحليل الوصف...";
 
     try {
-        const response = await fetch(
-            `${API_URL}/api/analyze`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ prompt })
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Server error: " + response.status);
-        }
+        const response = await fetch(`${API_URL}/api/analyze`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ prompt })
+        });
 
         const data = await response.json();
 
-        if (!data.success) {
-            throw new Error(data.error || "Analysis failed");
+        if (!response.ok) {
+            throw new Error(JSON.stringify(data));
         }
 
         resultBox.textContent =
@@ -69,11 +65,62 @@ analyzeButton.addEventListener("click", async function () {
             "النموذج: " + data.model;
 
     } catch (error) {
-        resultBox.textContent =
-            "تعذر الاتصال بالسيرفر.\n" +
-            "تأكد من تشغيل Backend وإعداد رابط API.\n" +
-            error.message;
+        resultBox.textContent = "خطأ: " + error.message;
     } finally {
         analyzeButton.disabled = false;
     }
 });
+
+createVideoButton.addEventListener("click", async function () {
+    const prompt = promptInput.value.trim();
+
+    if (!selectedImage) {
+        resultBox.textContent = "من فضلك اختر صورة أولاً.";
+        return;
+    }
+
+    if (!prompt) {
+        resultBox.textContent = "اكتب وصف الحركة أولاً.";
+        return;
+    }
+
+    createVideoButton.disabled = true;
+    resultBox.textContent = "جاري إرسال الصورة والوصف...";
+
+    try {
+        const formData = new FormData();
+        formData.append("image", selectedImage);
+        formData.append("prompt", prompt);
+
+        const response = await fetch(`${API_URL}/api/create-video`, {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || data.error || "فشل إنشاء الفيديو");
+        }
+
+        if (!data.success || !data.video_url) {
+            throw new Error(data.error || "لم يتم إرجاع فيديو.");
+        }
+
+        const videoUrl = new URL(data.video_url, API_URL).href;
+
+        videoPreview.src = videoUrl;
+        downloadVideo.href = videoUrl;
+
+        downloadVideo.href = data.video_url;
+        downloadVideo.hidden = false;
+
+        resultBox.textContent = "تم إنشاء الفيديو بنجاح!";
+
+    } catch (error) {
+        resultBox.textContent = "تعذر إنشاء الفيديو: " + error.message;
+    } finally {
+        createVideoButton.disabled = false;
+    }
+});
+
