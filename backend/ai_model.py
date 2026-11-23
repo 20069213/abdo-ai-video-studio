@@ -1,20 +1,10 @@
 
-import joblib
-
-from pathlib import Path
-
-MODEL_FILE = Path(__file__).parent / "scene_model.joblib"
-
-
 class AbdoAI:
 
-    def __init__(self):
-        self.model = None
+    def __init__(self, trained_model):
+        self.model = trained_model
         self.name = "ABDO AI"
         self.version = "1.0"
-
-        if MODEL_FILE.exists():
-            self.model = joblib.load(MODEL_FILE)
 
     def analyze(self, prompt):
 
@@ -26,12 +16,6 @@ class AbdoAI:
                 "error": "Prompt is empty"
             }
 
-        if self.model is None:
-            return {
-                "success": False,
-                "error": "Model not trained"
-            }
-
         scene = self.model.predict([prompt])[0]
 
         return {
@@ -41,6 +25,3 @@ class AbdoAI:
             "model": self.name,
             "version": self.version
         }
-
-
-ai = AbdoAI()
