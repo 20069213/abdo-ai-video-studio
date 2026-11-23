@@ -11,13 +11,14 @@ from backend.ai_model import AbdoAI
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    train()
-    app.state.ai = AbdoAI()
+    trained_model = train()
+    app.state.ai = AbdoAI(trained_model)
     yield
 
 
 app = FastAPI(
     title="ABDO AI VIDEO STUDIO",
+    description="Experimental AI video studio backend",
     version="1.0.0",
     lifespan=lifespan
 )
