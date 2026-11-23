@@ -4,66 +4,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080914">
     <title>ABDO AI VIDEO STUDIO</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="header">
-    <div class="logo">👑 ABDO AI</div>
-    <p>VIDEO STUDIO</p>
-    <span class="version">AI CREATIVE STUDIO</span>
-</header>
+    <header class="header">
+        <h1>👑 ABDO AI</h1>
+        <p>AI VIDEO STUDIO</p>
+        <span class="status">● SYSTEM READY</span>
+    </header>
 
-<main class="container">
+    <main class="container">
 
-    <section class="hero">
-        <h1>اصنع فيديوهاتك بالذكاء الاصطناعي</h1>
-        <p>حوّل خيالك إلى فيديوهات إبداعية</p>
-    </section>
+        <section class="panel">
+            <h2>إنشاء فيديو بالذكاء الاصطناعي</h2>
 
-    <section class="card">
-        <h2>🎬 تحويل النص إلى فيديو</h2>
+            <label for="prompt">اكتب وصف الفيديو</label>
+            <textarea id="prompt" placeholder="مثال: مدينة جميلة وقت الغروب..."></textarea>
 
-        <textarea id="prompt"
-            placeholder="اكتب وصف الفيديو الذي تريد إنشاءه..."></textarea>
+            <label for="imageInput">اختر صورة (اختياري)</label>
+            <input type="file" id="imageInput" accept="image/*">
 
-        <button onclick="generateTextVideo()">
-            إنشاء فيديو
-        </button>
-    </section>
+            <button id="analyzeButton">تحليل وصف الفيديو</button>
 
-    <section class="card">
-        <h2>🖼️ تحويل صورة إلى فيديو</h2>
+            <div id="result" class="result">
+                نتيجة التحليل ستظهر هنا
+            </div>
+        </section>
 
-        <input type="file" id="image" accept="image/*">
+        <section class="panel">
+            <h2>معاينة الصورة</h2>
+            <img id="preview" alt="معاينة الصورة" hidden>
+        </section>
 
-        <img id="imagePreview" alt="معاينة الصورة">
+    </main>
 
-        <textarea id="imagePrompt"
-            placeholder="اكتب كيف تريد أن تتحرك الصورة..."></textarea>
+    <footer>
+        <p>ABDO AI VIDEO STUDIO © 2026</p>
+        <p>Our Own AI Project</p>
+    </footer>
 
-        <button onclick="generateImageVideo()">
-            تحريك الصورة
-        </button>
-    </section>
-
-    <section class="card">
-        <h2>📁 مشاريعي</h2>
-        <div id="status">
-            لا توجد مشاريع حتى الآن
-        </div>
-    </section>
-
-</main>
-
-<footer>
-    <p>© 2026 ABDO AI VIDEO STUDIO</p>
-    <p>Created by ABDO SAAD 👑</p>
-</footer>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
