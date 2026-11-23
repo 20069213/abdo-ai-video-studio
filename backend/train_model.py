@@ -31,10 +31,6 @@ def train():
     joblib.dump(model, MODEL_FILE)
 
     print("ABDO AI TRAINING COMPLETE")
-    print("Samples:", len(data))
+    print("Training samples:", len(data))
 
     return model
-
-
-if __name__ == "__main__":
-    train()
