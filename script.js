@@ -47,18 +47,13 @@ imageInput.addEventListener("change", function () {
 
     selectedImage = file;
 
-    if (imageObjectUrl) {
-        URL.revokeObjectURL(imageObjectUrl);
-    }
-
+    if (imageObjectUrl) URL.revokeObjectURL(imageObjectUrl);
     imageObjectUrl = URL.createObjectURL(file);
 
     preview.src = imageObjectUrl;
     preview.hidden = false;
 
-    if (previewPlaceholder) {
-        previewPlaceholder.hidden = true;
-    }
+    if (previewPlaceholder) previewPlaceholder.hidden = true;
 
     showMessage("تم اختيار الصورة بنجاح. اكتب وصف الحركة.");
 });
@@ -77,9 +72,7 @@ analyzeButton.addEventListener("click", async function () {
     try {
         const response = await fetch(`${API_URL}/api/analyze`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ prompt })
         });
 
@@ -102,6 +95,32 @@ analyzeButton.addEventListener("click", async function () {
     }
 });
 
+async function checkJob(jobId) {
+    while (true) {
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        const response = await fetch(
+            `${API_URL}/api/jobs/${encodeURIComponent(jobId)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "تعذر متابعة المهمة");
+        }
+
+        if (data.status === "completed" && data.video_url) {
+            return data.video_url;
+        }
+
+        if (data.status === "failed") {
+            throw new Error(data.message || "فشل إنشاء الفيديو");
+        }
+
+        showMessage(data.message || "جاري إنشاء الفيديو...");
+    }
+}
+
 createVideoButton.addEventListener("click", async function () {
     const prompt = promptInput.value.trim();
 
@@ -119,18 +138,14 @@ createVideoButton.addEventListener("click", async function () {
     videoPreview.hidden = true;
     downloadVideo.hidden = true;
 
-    if (videoPlaceholder) {
-        videoPlaceholder.hidden = false;
-    }
-
-    showMessage("جاري تجهيز الصورة والوصف...");
+    if (videoPlaceholder) videoPlaceholder.hidden = false;
 
     try {
         const formData = new FormData();
         formData.append("image", selectedImage);
         formData.append("prompt", prompt);
 
-        showMessage("جاري الاتصال بمحرك Wan2.2...");
+        showMessage("جاري إرسال طلب إنشاء الفيديو...");
 
         const response = await fetch(`${API_URL}/api/create-video`, {
             method: "POST",
@@ -140,23 +155,22 @@ createVideoButton.addEventListener("click", async function () {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(
-                data.detail || data.error || "فشل إنشاء الفيديو"
-            );
+            throw new Error(data.detail || data.error || "فشل إرسال الطلب");
         }
 
-        if (!data.success || !data.video_url) {
-            throw new Error(data.error || "لم يتم إرجاع فيديو.");
+        if (!data.job_id) {
+            throw new Error("السيرفر لم يرجع رقم المهمة");
         }
 
-        const videoUrl = new URL(data.video_url, API_URL).href;
+        showMessage("تم استلام الطلب. جاري إنشاء الفيديو...");
+
+        const relativeVideoUrl = await checkJob(data.job_id);
+        const videoUrl = new URL(relativeVideoUrl, API_URL).href;
 
         videoPreview.src = videoUrl;
         videoPreview.hidden = false;
 
-        if (videoPlaceholder) {
-            videoPlaceholder.hidden = true;
-        }
+        if (videoPlaceholder) videoPlaceholder.hidden = true;
 
         downloadVideo.href = videoUrl;
         downloadVideo.hidden = false;
@@ -171,7 +185,6 @@ createVideoButton.addEventListener("click", async function () {
 });
 
 window.addEventListener("beforeunload", function () {
-    if (imageObjectUrl) {
-        URL.revokeObjectURL(imageObjectUrl);
-    }
+    if (imageObjectUrl) URL.revokeObjectURL(imageObjectUrl);
 });
+
