@@ -1,4 +1,4 @@
-const API_URL = "https://safely-hood-printer-brands.trycloudflare.com";
+const API_URL = "https://principle-aruba-premiere-ballot.trycloudflare.com";
 
 const promptInput = document.getElementById("prompt");
 const imageInput = document.getElementById("imageInput");
