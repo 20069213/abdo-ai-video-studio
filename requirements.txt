@@ -1,7 +1,6 @@
-
 fastapi
-uvicorn[standard]
+uvicorn
 python-multipart
-scikit-learn
-joblib
 requests
+pillow
+gradio_client
