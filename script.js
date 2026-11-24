@@ -1,3 +1,4 @@
+
 const API_URL = "https://principle-aruba-premiere-ballot.trycloudflare.com";
 
 const promptInput = document.getElementById("prompt");
@@ -55,7 +56,7 @@ analyzeButton.addEventListener("click", async function () {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(JSON.stringify(data));
+            throw new Error(data.detail || "فشل التحليل");
         }
 
         resultBox.textContent =
@@ -84,12 +85,16 @@ createVideoButton.addEventListener("click", async function () {
     }
 
     createVideoButton.disabled = true;
+    videoPreview.hidden = true;
+    downloadVideo.hidden = true;
     resultBox.textContent = "جاري إرسال الصورة والوصف...";
 
     try {
         const formData = new FormData();
         formData.append("image", selectedImage);
         formData.append("prompt", prompt);
+
+        resultBox.textContent = "جاري الاتصال بمحرك Wan2.2...";
 
         const response = await fetch(`${API_URL}/api/create-video`, {
             method: "POST",
@@ -109,9 +114,9 @@ createVideoButton.addEventListener("click", async function () {
         const videoUrl = new URL(data.video_url, API_URL).href;
 
         videoPreview.src = videoUrl;
-        downloadVideo.href = videoUrl;
+        videoPreview.hidden = false;
 
-        downloadVideo.href = data.video_url;
+        downloadVideo.href = videoUrl;
         downloadVideo.hidden = false;
 
         resultBox.textContent = "تم إنشاء الفيديو بنجاح!";
@@ -122,4 +127,3 @@ createVideoButton.addEventListener("click", async function () {
         createVideoButton.disabled = false;
     }
 });
-
