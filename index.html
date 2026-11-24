@@ -9,75 +9,127 @@
 </head>
 <body>
 
-    <header class="header">
+<header class="hero">
+    <div class="hero-content">
         <h1>👑 ABDO AI</h1>
-        <p>AI VIDEO STUDIO</p>
+        <h2>VIDEO STUDIO</h2>
         <span class="status">● SYSTEM READY</span>
-    </header>
+    </div>
+</header>
 
-    <main class="container">
+<!-- شريط الصور الإعلانية المتحرك -->
+<section class="ad-section">
+    <div class="ad-track">
 
+        <div class="ad-card ad-car">
+            <span>🏎️</span>
+            <h3>AI CAR CINEMA</h3>
+            <p>حوّل أفكارك إلى مشاهد سينمائية</p>
+        </div>
+
+        <div class="ad-card ad-city">
+            <span>🌆</span>
+            <h3>FUTURE WORLD</h3>
+            <p>اصنع عالمك بالذكاء الاصطناعي</p>
+        </div>
+
+        <div class="ad-card ad-robot">
+            <span>🤖</span>
+            <h3>AI TECHNOLOGY</h3>
+            <p>إبداع بلا حدود</p>
+        </div>
+
+        <div class="ad-card ad-movie">
+            <span>🎬</span>
+            <h3>YOUR MOVIE</h3>
+            <p>حوّل صورك إلى فيديو</p>
+        </div>
+
+        <!-- تكرار العناصر لاستمرار الحركة -->
+        <div class="ad-card ad-car">
+            <span>🏎️</span>
+            <h3>AI CAR CINEMA</h3>
+            <p>حوّل أفكارك إلى مشاهد سينمائية</p>
+        </div>
+
+        <div class="ad-card ad-city">
+            <span>🌆</span>
+            <h3>FUTURE WORLD</h3>
+            <p>اصنع عالمك بالذكاء الاصطناعي</p>
+        </div>
+
+        <div class="ad-card ad-robot">
+            <span>🤖</span>
+            <h3>AI TECHNOLOGY</h3>
+            <p>إبداع بلا حدود</p>
+        </div>
+
+        <div class="ad-card ad-movie">
+            <span>🎬</span>
+            <h3>YOUR MOVIE</h3>
+            <p>حوّل صورك إلى فيديو</p>
+        </div>
+
+    </div>
+</section>
+
+<div class="welcome-bar">
+    📢 مرحباً بك في ABDO AI VIDEO STUDIO — اصنع فيديوهاتك بإبداع!
+</div>
+
+<main class="container">
+
+    <section class="panel creator">
+        <h2>🚀 إنشاء فيديو بالذكاء الاصطناعي</h2>
+
+        <label for="prompt">✏️ اكتب وصف الفيديو</label>
+        <textarea id="prompt"
+            placeholder="مثال: سيارة تسير في مدينة مستقبلية وقت الغروب..."></textarea>
+
+        <label for="imageInput">🖼️ اختر صورة لإنشاء الفيديو</label>
+        <input type="file" id="imageInput" accept="image/*">
+
+        <button id="analyzeButton" type="button">
+            🔍 تحليل وصف الفيديو
+        </button>
+
+        <div id="result" class="result">
+            نتيجة التحليل ستظهر هنا
+        </div>
+
+        <button id="createVideoButton" type="button">
+            🎬 إنشاء الفيديو
+        </button>
+
+        <div id="videoStatus" class="result">
+            ⚡ جاهز لإنشاء الفيديو
+        </div>
+    </section>
+
+    <div class="side-panels">
         <section class="panel">
-            <h2>إنشاء فيديو بالذكاء الاصطناعي</h2>
-
-            <label for="prompt">اكتب وصف الفيديو</label>
-            <textarea
-                id="prompt"
-                placeholder="مثال: سيارة تسير في مدينة مستقبلية وقت الغروب..."
-            ></textarea>
-
-            <label for="imageInput">اختر صورة (مطلوبة لإنشاء الفيديو)</label>
-            <input type="file" id="imageInput" accept="image/*">
-
-            <button id="analyzeButton" type="button">
-                تحليل وصف الفيديو
-            </button>
-
-            <div id="result" class="result">
-                نتيجة التحليل ستظهر هنا
-            </div>
-
-            <button id="createVideoButton" type="button">
-                🎬 إنشاء الفيديو
-            </button>
-
-            <div id="videoStatus" class="result">
-                جاهز لإنشاء الفيديو
-            </div>
-        </section>
-
-        <section class="panel">
-            <h2>معاينة الصورة</h2>
+            <h2>🖼️ معاينة الصورة</h2>
             <img id="preview" alt="معاينة الصورة" hidden>
         </section>
 
         <section class="panel">
-            <h2>الفيديو الناتج</h2>
+            <h2>▶️ الفيديو الناتج</h2>
+            <video id="videoPreview" controls playsinline hidden></video>
 
-            <video
-                id="videoPreview"
-                controls
-                playsinline
-                hidden
-            ></video>
-
-            <a
-                id="downloadVideo"
-                href="#"
-                download="abdo-ai-video.mp4"
-                hidden
-            >
-                تحميل الفيديو
+            <a id="downloadVideo" href="#"
+                download="abdo-ai-video.mp4" hidden>
+                ⬇️ تحميل الفيديو
             </a>
         </section>
+    </div>
 
-    </main>
+</main>
 
-    <footer>
-        <p>ABDO AI VIDEO STUDIO © 2026</p>
-        <p>AI Video Generation Studio</p>
-    </footer>
+<footer>
+    <p>👑 ABDO AI VIDEO STUDIO © 2026</p>
+    <p>AI Video Generation Studio</p>
+</footer>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
