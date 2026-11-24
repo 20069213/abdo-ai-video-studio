@@ -11,38 +11,68 @@ const preview = document.getElementById("preview");
 const videoPreview = document.getElementById("videoPreview");
 const downloadVideo = document.getElementById("downloadVideo");
 
+const previewPlaceholder = document.querySelector(".preview-placeholder");
+const videoPlaceholder = document.querySelector(".video-placeholder");
+
 let selectedImage = null;
+let imageObjectUrl = null;
+
+function showMessage(message) {
+    resultBox.textContent = message;
+}
 
 imageInput.addEventListener("change", function () {
-    selectedImage = this.files[0];
+    const file = this.files[0];
 
-    if (!selectedImage) {
-        preview.hidden = true;
-        return;
-    }
-
-    if (!selectedImage.type.startsWith("image/")) {
-        resultBox.textContent = "اختر صورة صحيحة.";
+    if (!file) {
         selectedImage = null;
-        this.value = "";
         preview.hidden = true;
+        if (previewPlaceholder) previewPlaceholder.hidden = false;
         return;
     }
 
-    preview.src = URL.createObjectURL(selectedImage);
+    if (!file.type.startsWith("image/")) {
+        showMessage("اختر ملف صورة صحيح.");
+        this.value = "";
+        selectedImage = null;
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        showMessage("حجم الصورة أكبر من 10 ميجابايت.");
+        this.value = "";
+        selectedImage = null;
+        return;
+    }
+
+    selectedImage = file;
+
+    if (imageObjectUrl) {
+        URL.revokeObjectURL(imageObjectUrl);
+    }
+
+    imageObjectUrl = URL.createObjectURL(file);
+
+    preview.src = imageObjectUrl;
     preview.hidden = false;
+
+    if (previewPlaceholder) {
+        previewPlaceholder.hidden = true;
+    }
+
+    showMessage("تم اختيار الصورة بنجاح. اكتب وصف الحركة.");
 });
 
 analyzeButton.addEventListener("click", async function () {
     const prompt = promptInput.value.trim();
 
     if (!prompt) {
-        resultBox.textContent = "اكتب وصف الفيديو أولاً.";
+        showMessage("اكتب وصف الفيديو أولاً.");
         return;
     }
 
     analyzeButton.disabled = true;
-    resultBox.textContent = "جاري تحليل الوصف...";
+    showMessage("جاري تحليل الوصف...");
 
     try {
         const response = await fetch(`${API_URL}/api/analyze`, {
@@ -59,13 +89,14 @@ analyzeButton.addEventListener("click", async function () {
             throw new Error(data.detail || "فشل التحليل");
         }
 
-        resultBox.textContent =
+        showMessage(
             "تم التحليل بنجاح!\n" +
             "المشهد: " + data.scene + "\n" +
-            "النموذج: " + data.model;
+            "النموذج: " + data.model
+        );
 
     } catch (error) {
-        resultBox.textContent = "خطأ: " + error.message;
+        showMessage("خطأ في التحليل: " + error.message);
     } finally {
         analyzeButton.disabled = false;
     }
@@ -75,26 +106,31 @@ createVideoButton.addEventListener("click", async function () {
     const prompt = promptInput.value.trim();
 
     if (!selectedImage) {
-        resultBox.textContent = "من فضلك اختر صورة أولاً.";
+        showMessage("من فضلك اختر صورة أولاً.");
         return;
     }
 
     if (!prompt) {
-        resultBox.textContent = "اكتب وصف الحركة أولاً.";
+        showMessage("اكتب وصف الحركة أولاً.");
         return;
     }
 
     createVideoButton.disabled = true;
     videoPreview.hidden = true;
     downloadVideo.hidden = true;
-    resultBox.textContent = "جاري إرسال الصورة والوصف...";
+
+    if (videoPlaceholder) {
+        videoPlaceholder.hidden = false;
+    }
+
+    showMessage("جاري تجهيز الصورة والوصف...");
 
     try {
         const formData = new FormData();
         formData.append("image", selectedImage);
         formData.append("prompt", prompt);
 
-        resultBox.textContent = "جاري الاتصال بمحرك Wan2.2...";
+        showMessage("جاري الاتصال بمحرك Wan2.2...");
 
         const response = await fetch(`${API_URL}/api/create-video`, {
             method: "POST",
@@ -104,7 +140,9 @@ createVideoButton.addEventListener("click", async function () {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.detail || data.error || "فشل إنشاء الفيديو");
+            throw new Error(
+                data.detail || data.error || "فشل إنشاء الفيديو"
+            );
         }
 
         if (!data.success || !data.video_url) {
@@ -116,14 +154,24 @@ createVideoButton.addEventListener("click", async function () {
         videoPreview.src = videoUrl;
         videoPreview.hidden = false;
 
+        if (videoPlaceholder) {
+            videoPlaceholder.hidden = true;
+        }
+
         downloadVideo.href = videoUrl;
         downloadVideo.hidden = false;
 
-        resultBox.textContent = "تم إنشاء الفيديو بنجاح!";
+        showMessage("تم إنشاء الفيديو بنجاح! اضغط تشغيل لمشاهدته.");
 
     } catch (error) {
-        resultBox.textContent = "تعذر إنشاء الفيديو: " + error.message;
+        showMessage("تعذر إنشاء الفيديو: " + error.message);
     } finally {
         createVideoButton.disabled = false;
+    }
+});
+
+window.addEventListener("beforeunload", function () {
+    if (imageObjectUrl) {
+        URL.revokeObjectURL(imageObjectUrl);
     }
 });
