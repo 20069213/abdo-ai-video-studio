@@ -21,15 +21,28 @@
             <h2>إنشاء فيديو بالذكاء الاصطناعي</h2>
 
             <label for="prompt">اكتب وصف الفيديو</label>
-            <textarea id="prompt" placeholder="مثال: مدينة جميلة وقت الغروب..."></textarea>
+            <textarea
+                id="prompt"
+                placeholder="مثال: سيارة تسير في مدينة مستقبلية وقت الغروب..."
+            ></textarea>
 
-            <label for="imageInput">اختر صورة (اختياري)</label>
+            <label for="imageInput">اختر صورة (مطلوبة لإنشاء الفيديو)</label>
             <input type="file" id="imageInput" accept="image/*">
 
-            <button id="analyzeButton">تحليل وصف الفيديو</button>
+            <button id="analyzeButton" type="button">
+                تحليل وصف الفيديو
+            </button>
 
             <div id="result" class="result">
                 نتيجة التحليل ستظهر هنا
+            </div>
+
+            <button id="createVideoButton" type="button">
+                🎬 إنشاء الفيديو
+            </button>
+
+            <div id="videoStatus" class="result">
+                جاهز لإنشاء الفيديو
             </div>
         </section>
 
@@ -38,11 +51,31 @@
             <img id="preview" alt="معاينة الصورة" hidden>
         </section>
 
+        <section class="panel">
+            <h2>الفيديو الناتج</h2>
+
+            <video
+                id="videoPreview"
+                controls
+                playsinline
+                hidden
+            ></video>
+
+            <a
+                id="downloadVideo"
+                href="#"
+                download="abdo-ai-video.mp4"
+                hidden
+            >
+                تحميل الفيديو
+            </a>
+        </section>
+
     </main>
 
     <footer>
         <p>ABDO AI VIDEO STUDIO © 2026</p>
-        <p>Our Own AI Project</p>
+        <p>AI Video Generation Studio</p>
     </footer>
 
     <script src="script.js"></script>
