@@ -1,5 +1,4 @@
-
-const API_URL = "https://acrobat-til-dimension-configure.trycloudflare.com";
+const API_URL = "https://safely-hood-printer-brands.trycloudflare.com";
 
 const promptInput = document.getElementById("prompt");
 const imageInput = document.getElementById("imageInput");
